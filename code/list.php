@@ -1,7 +1,7 @@
 <?php
+    session_start();
     require "./html/login_header.html";
     require "./con_db.php";
-    session_start();
     $count = 0;
     $user_id = $_SESSION['user_id'];
     $list_json = show_list($user_id);
@@ -37,7 +37,7 @@
 
             <?php
                 $list = json_decode($list_json);
-                foreach ($list as $key => $value) {
+                foreach ((array)$list as $key => $value) {
                     if ($value) {
                         echo '<tr><td>'.++$count.'</td>';
                         echo '
