@@ -100,6 +100,12 @@ a624d888d69f        11 days ago         /bin/sh -c #(nop)  CMD ["nginx" "-g" "da
 * `docker-compose up`
 * `docker-compose down`
 
+### Version
+
+```yaml
+version: '3'
+```
+
 ### PHP
 
 ```yaml
@@ -156,7 +162,114 @@ a624d888d69f        11 days ago         /bin/sh -c #(nop)  CMD ["nginx" "-g" "da
       - back
 ```
 
+### Networks
+
+```yaml
+networks: 
+  front:
+    driver: "bridge"
+  back:
+    driver: "bridge"
+```
+
 ## Docker Swarm Mode
+
+* `docker swarm init`
+* `docker swarm leave`
+* `docker swarm leave --force`
+* `docker stack -c docker-compose.yml <name>`
+* `docker stack ls` : list stacks
+* `docker stack ps` : list tasks in the stack
+* `docker stack services <name>` : list services in the stack
+* `docker stack down`
+
+### Notice
+
+* `build:` can’t be used, `image:` must exists.
+* `restart` can’t be used, use `restart_policy` instead.
+* change `bridge` network to `overlay` in swarm mode.
+
+### PHP
+
+```yaml
+  php-workspace:
+    image: docker-php_php-workspace:latest
+    deploy:
+      mode: replicated
+      replicas: 3
+    depends_on:
+      - mysql-db
+    volumes:
+      - ./code:/var/www/html/
+    networks: 
+      - front
+      - back
+```
+
+### Nginx
+
+```yaml
+  nginx:
+    image: docker-php_nginx:latest
+    deploy:
+      mode: replicated
+      replicas: 3
+    depends_on:
+      - php-workspace
+      - mysql-db
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./log/nginx:/var/log/nginx/
+    networks: 
+      - front
+```
+
+### MySQL
+
+```yaml
+  mysql-db:
+    image: mysql:5.7
+    deploy:
+      placement:
+        constraints: 
+          - node.role == manager
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: "123"
+    volumes:
+      - ./mysql/db_data:/var/lib/mysql
+      - ./mysql/init:/docker-entrypoint-initdb.d/
+    networks: 
+      - back
+```
+
+### Visualizer Page
+
+```yaml
+  visualizer:
+    image: dockersamples/visualizer:stable
+    ports:
+      - "9090:8080"
+    stop_grace_period: 1m30s
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    deploy:
+      placement:
+        constraints: 
+          - node.role == manager
+```
+
+### Networks
+
+```yaml
+networks: 
+  front:
+    driver: "overlay"
+  back:
+    driver: "overlay"
+```
 
 
 
