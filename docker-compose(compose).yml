@@ -1,0 +1,52 @@
+version: '3'
+
+services:
+  php-workspace:
+    container_name: lab1-php
+    build:
+      context: ./php
+      dockerfile: Dockerfile
+    restart: always
+    depends_on:
+      - mysql-db
+    volumes:
+      - ./code:/var/www/html/
+    networks: 
+      - front
+      - back
+
+  nginx:
+    container_name: lab1-nginx
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    restart: always
+    depends_on:
+      - php-workspace
+      - mysql-db
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./log/nginx:/var/log/nginx/
+    networks: 
+      - front
+
+  mysql-db:
+    container_name: lab1-mysql
+    image: mysql:5.7
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: "123"
+    volumes:
+      - ./mysql/db_data:/var/lib/mysql
+      - ./mysql/init:/docker-entrypoint-initdb.d/
+    networks: 
+      - back
+
+networks: 
+  front:
+    driver: "bridge"
+  back:
+    driver: "bridge"
