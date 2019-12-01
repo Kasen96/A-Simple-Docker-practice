@@ -97,10 +97,12 @@ a624d888d69f        11 days ago         /bin/sh -c #(nop)  CMD ["nginx" "-g" "da
 
 ## Docker Compose
 
-```yaml
-version: '3'
+* `docker-compose up`
+* `docker-compose down`
 
-services:
+### PHP
+
+```yaml
   php-workspace:
     container_name: lab1-php
     build:
@@ -114,7 +116,11 @@ services:
     networks: 
       - front
       - back
+```
 
+### Nginx
+
+```yaml
   nginx:
     container_name: lab1-nginx
     build:
@@ -130,7 +136,11 @@ services:
       - ./log/nginx:/var/log/nginx/
     networks: 
       - front
+```
 
+### MySQL
+
+```yaml
   mysql-db:
     container_name: lab1-mysql
     image: mysql:5.7
@@ -144,19 +154,9 @@ services:
       - ./mysql/init:/docker-entrypoint-initdb.d/
     networks: 
       - back
-
-networks: 
-  front:
-    driver: "bridge"
-  back:
-    driver: "bridge"
-
 ```
 
-* `docker-compose up`
-* `docker-compose down`
-
-## Docker Swarm
+## Docker Swarm Mode
 
 
 
