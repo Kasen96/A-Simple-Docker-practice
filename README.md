@@ -25,7 +25,7 @@ In the database, I use two tables, one is the user table to store user infomatio
 
 ## Docker Containers
 
-* `docker build -t <image>:<version> .`
+* `docker build -t <image>:<version> .` - *Don’t foget to add the `.` !!!*
 
 ### Dockerfile: PHP
 
@@ -174,18 +174,76 @@ networks:
 
 ## Docker Swarm Mode
 
-* `docker swarm init`
+### Docker Swarm Commands
+
+* `docker swarm init` : become manager node.
 * `docker swarm leave`
-* `docker swarm leave --force`
+* `docker swarm leave --force` : for manager node.
+
+### Docker Stack Commands
+
 * `docker stack deploy -c docker-compose.yml <name>`
 * `docker stack ls` : list stacks
-* `docker stack ps` : list tasks in the stack
+* `docker stack ps <name>` : list tasks in the stack
 * `docker stack services <name>` : list services in the stack
-* `docker stack down`
+* `docker stack down <name>` 
 
-### Notice
+### Docker Service Commands
+
+* `docker service ls`
+
+  ```yaml
+  docker service ls
+  ID                  NAME                      MODE                REPLICAS            IMAGE                             PORTS
+  x8l52xbdlhkd        stack-php_mysql-db        replicated          1/1                 mysql:5.7                         *:3306->3306/tcp
+  lfu2zebydvtj        stack-php_nginx           replicated          3/3                 docker-php_nginx:latest           *:8080->8080/tcp
+  r5abbfc4lx8n        stack-php_php-workspace   replicated          3/3                 docker-php_php-workspace:latest
+  3suredg8dskd        stack-php_visualizer      replicated          1/1                 dockersamples/visualizer:stable   *:9090->8080/tcp
+  ```
+
+* `docker service ps <name>`
+
+  ```yaml
+  docker service ps stack-php_nginx
+  ID                  NAME                IMAGE                     NODE                DESIRED STATE       CURRENT STATE            ERROR               PORTS
+  cmrmgwv0y7ym        stack-php_nginx.1   docker-php_nginx:latest   docker-desktop      Running             Running 16 minutes ago
+  sndpvwh3utqe        stack-php_nginx.2   docker-php_nginx:latest   docker-desktop      Running             Running 16 minutes ago
+  zbhhvyza9j4r        stack-php_nginx.3   docker-php_nginx:latest   docker-desktop      Running             Running 16 minutes ago
+  ```
+
+* `docker service logs <name>`
+
+* `docker service scale <name>=<number>` : number > number_now, scale up; number < number_now, scale down.
+
+  ```yaml
+  docker service scale stack-php_nginx=5
+  stack-php_nginx scaled to 5
+  overall progress: 5 out of 5 tasks
+  1/5: running   [==================================================>]
+  2/5: running   [==================================================>]
+  3/5: running   [==================================================>]
+  4/5: running   [==================================================>]
+  5/5: running   [==================================================>]
+  verify: Service converged
+  ```
+
+  ```yaml
+  docker service scale stack-php_nginx=3
+  stack-php_nginx scaled to 3
+  overall progress: 3 out of 3 tasks
+  1/3: running   [==================================================>]
+  2/3: running   [==================================================>]
+  3/3: running   [==================================================>]
+  verify: Service converged
+  ```
+
+* `docker service rm <name>`
+
+### Notice for docker-compose.yml
 
 * `build:` can’t be used, `image:` must exists.
+  * Download `php-workspace`  image: `docker pull nullptrz/customized-php-of-lab1:v1` .
+  * Download `nginx` image: `docker pull nullptrz/customized-nginx-of-lab1:v1` .
 * `restart` can’t be used, use `restart_policy` instead.
 * change `bridge` network to `overlay` in swarm mode.
 
@@ -245,7 +303,9 @@ networks:
       - back
 ```
 
-### Visualizer Page
+### Visualized Page
+
+* Visit `http:localhost:9090 ` for visualized page
 
 ```yaml
   visualizer:
