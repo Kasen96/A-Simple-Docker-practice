@@ -25,6 +25,8 @@ In the database, I use two tables, one is the user table to store user infomatio
 
 ## Docker Containers
 
+* `docker build -t <image>:<version> .`
+
 ### Dockerfile: PHP
 
 ```dockerfile
@@ -151,7 +153,8 @@ networks:
 
 ```
 
-
+* `docker-compose up`
+* `docker-compose down`
 
 ## Docker Swarm
 
