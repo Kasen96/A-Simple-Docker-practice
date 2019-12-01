@@ -3,7 +3,9 @@ version: '3'
 services:
   php-workspace:
     container_name: lab1-php
-    build: ./php
+    build:
+      context: ./php
+      dockerfile: Dockerfile
     restart: always
     depends_on:
       - mysql-db
@@ -15,7 +17,9 @@ services:
 
   nginx:
     container_name: lab1-nginx
-    build: ./nginx
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
     restart: always
     depends_on:
       - php-workspace
