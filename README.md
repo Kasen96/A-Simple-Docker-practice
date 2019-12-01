@@ -177,7 +177,7 @@ networks:
 * `docker swarm init`
 * `docker swarm leave`
 * `docker swarm leave --force`
-* `docker stack -c docker-compose.yml <name>`
+* `docker stack deploy -c docker-compose.yml <name>`
 * `docker stack ls` : list stacks
 * `docker stack ps` : list tasks in the stack
 * `docker stack services <name>` : list services in the stack
