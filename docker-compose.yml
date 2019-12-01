@@ -2,11 +2,10 @@ version: '3'
 
 services:
   php-workspace:
-    container_name: lab1-php
-    build:
-      context: ./php
-      dockerfile: Dockerfile
-    restart: always
+    image: docker-php_php-workspace:latest
+    deploy:
+      mode: replicated
+      replicas: 3
     depends_on:
       - mysql-db
     volumes:
@@ -16,11 +15,10 @@ services:
       - back
 
   nginx:
-    container_name: lab1-nginx
-    build:
-      context: ./nginx
-      dockerfile: Dockerfile
-    restart: always
+    image: docker-php_nginx:latest
+    deploy:
+      mode: replicated
+      replicas: 3
     depends_on:
       - php-workspace
       - mysql-db
@@ -32,9 +30,11 @@ services:
       - front
 
   mysql-db:
-    container_name: lab1-mysql
     image: mysql:5.7
-    restart: always
+    deploy:
+      placement:
+        constraints: 
+          - node.role == manager
     ports:
       - "3306:3306"
     environment:
@@ -45,8 +45,20 @@ services:
     networks: 
       - back
 
+  visualizer:
+    image: dockersamples/visualizer:stable
+    ports:
+      - "9090:8080"
+    stop_grace_period: 1m30s
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    deploy:
+      placement:
+        constraints: 
+          - node.role == manager
+
 networks: 
   front:
-    driver: "bridge"
+    driver: "overlay"
   back:
-    driver: "bridge"
+    driver: "overlay"
