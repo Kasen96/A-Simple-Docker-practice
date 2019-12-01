@@ -1,6 +1,6 @@
 -- 创建数据库
 
-create database docker_todolist;
+create database if not exists docker_todolist charset utf8;
 
 use docker_todolist;
 
