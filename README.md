@@ -41,20 +41,6 @@ FROM nginx:alpine
 COPY conf.d /etc/nginx/conf.d
 ```
 
-### Dockerfile: MySQL
-
-```dockerfile
-FROM mysql:5.7
-
-ENV MYSQL_ALLOW_EMPTY_PASSWORD=yes
-
-COPY setup.sh /mysql/setup.sh
-COPY script.sql /mysql/script.sql
-COPY privileges.sql /mysql/privileges.sql
-
-CMD ["sh", "/mysql/setup.sh"]
-```
-
 
 
 ## Docker Compose
@@ -65,7 +51,9 @@ version: '3'
 services:
   php-workspace:
     container_name: lab1-php
-    build: ./php
+    build:
+      context: ./php
+      dockerfile: Dockerfile
     restart: always
     depends_on:
       - mysql-db
@@ -77,7 +65,9 @@ services:
 
   nginx:
     container_name: lab1-nginx
-    build: ./nginx
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
     restart: always
     depends_on:
       - php-workspace
@@ -91,15 +81,15 @@ services:
 
   mysql-db:
     container_name: lab1-mysql
-    #image: mysql:5.7
-    build: ./mysql
+    image: mysql:5.7
     restart: always
+    ports:
+      - "3306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: "123"
-      MYSQL_USER: "docker"
-      MYSQL_PASSWORD: "123456"
     volumes:
       - ./mysql/db_data:/var/lib/mysql
+      - ./mysql/init:/docker-entrypoint-initdb.d/
     networks: 
       - back
 
