@@ -17,6 +17,8 @@ services:
   nginx:
     image: docker-php_nginx:latest
     deploy:
+      restart_policy:
+        condition: on-failure
       mode: replicated
       replicas: 3
     depends_on:
@@ -32,6 +34,8 @@ services:
   mysql-db:
     image: mysql:5.7
     deploy:
+      restart_policy:
+        condition: on-failure
       placement:
         constraints: 
           - node.role == manager
