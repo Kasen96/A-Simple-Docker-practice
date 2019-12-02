@@ -174,6 +174,20 @@ networks:
 
 ## Docker Swarm Mode
 
+### Docker Machine
+
+* `docker-machine create -d <driver> <name>`
+  * Driver: Virtualbox / macOS xhyve / hyperv
+  * `--engine-opt dns=8.8.8.8`
+  * `--engine-registry-mirror https://registry.docker-cn.com`
+  * `--virtualbox-memory 2048`
+  * `--virtualbox-cpu-count 2`
+* `docker-machine ls`
+* `docker-machine env <name>`
+* `docker-machine ssh <name>`
+* `docker-machine stop <name>`
+* `docker-machine rm <name>`
+
 ### Docker Swarm Commands
 
 * `docker swarm init` : become manager node.
@@ -267,9 +281,11 @@ networks:
 ### Nginx
 
 ```yaml
-  nginx:
+	nginx:
     image: docker-php_nginx:latest
     deploy:
+      restart_policy:
+        condition: on-failure
       mode: replicated
       replicas: 3
     depends_on:
@@ -289,6 +305,8 @@ networks:
   mysql-db:
     image: mysql:5.7
     deploy:
+    	restart_policy:
+        condition: on-failure
       placement:
         constraints: 
           - node.role == manager
@@ -297,7 +315,8 @@ networks:
     environment:
       MYSQL_ROOT_PASSWORD: "123"
     volumes:
-      - ./mysql/db_data:/var/lib/mysql
+      - ./mysql/db_data:/var/lib/mysql/
+      - ./log/mysql:/var/log/mysql/
       - ./mysql/init:/docker-entrypoint-initdb.d/
     networks: 
       - back
