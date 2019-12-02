@@ -19,6 +19,12 @@ services:
     deploy:
       restart_policy:
         condition: on-failure
+      resources:
+        limit: '0.50'
+        memory: 50M
+      reservation:
+        cpus: '0.25'
+        memory: 20M
       mode: replicated
       replicas: 3
     depends_on:
@@ -36,6 +42,12 @@ services:
     deploy:
       restart_policy:
         condition: on-failure
+      resources:
+        limits: '0.50' # 50% of a single core
+        memory: 50M # no more than 50M of memory
+      reservations:
+        cpus: '0.25' # 25% CPU time reserved
+        memory: 20M # 20M of memory reserved
       placement:
         constraints: 
           - node.role == manager
