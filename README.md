@@ -191,6 +191,9 @@ networks:
 ### Docker Swarm Commands
 
 * `docker swarm init` : become manager node.
+  * `--advertise-addr <IP>`
+* `docker swarm join --token <...> <IP:Port>`
+* `docker node ls`
 * `docker swarm leave`
 * `docker swarm leave --force` : for manager node.
 
@@ -286,6 +289,13 @@ networks:
     deploy:
       restart_policy:
         condition: on-failure
+      # resources:
+      #   limits: 
+      #     cpus: '0.50'
+      #     memory: 50M
+      #   reservations:
+      #     cpus: '0.25'
+      #     memory: 20M
       mode: replicated
       replicas: 3
     depends_on:
@@ -307,6 +317,13 @@ networks:
     deploy:
     	restart_policy:
         condition: on-failure
+      # resources:
+      #   limits: 
+      #     cpus: '0.50' # 50% of a single core
+      #     memory: 50M # no more than 50M of memory
+      #   reservations:
+      #     cpus: '0.25' # 25% CPU time reserved
+      #     memory: 20M # 20M of memory reserved
       placement:
         constraints: 
           - node.role == manager
