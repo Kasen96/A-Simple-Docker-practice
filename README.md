@@ -38,7 +38,7 @@ RUN docker-php-ext-install mysqli
 #### Layers
 
 ```shell
-docker history docker-php_php-workspace
+# docker history docker-php_php-workspace
 IMAGE               CREATED             CREATED BY                                      SIZE                COMMENT
 1f4aea0971a6        22 minutes ago      /bin/sh -c docker-php-ext-install mysqli        367kB
 3fc70c6602c0        9 days ago          /bin/sh -c #(nop)  CMD ["php-fpm"]              0B
@@ -80,7 +80,7 @@ COPY conf.d /etc/nginx/conf.d
 #### Layers
 
 ```shell
-docker history docker-php_nginx
+# docker history docker-php_nginx
 IMAGE               CREATED             CREATED BY                                      SIZE                COMMENT
 7f8a57649b57        23 minutes ago      /bin/sh -c #(nop) COPY dir:b6be4f9ecc46a5558…   625B
 a624d888d69f        11 days ago         /bin/sh -c #(nop)  CMD ["nginx" "-g" "daemon…   0B
@@ -209,8 +209,8 @@ networks:
 
 * `docker service ls`
 
-  ```yaml
-  docker service ls
+  ```sh
+  # docker service ls
   ID                  NAME                      MODE                REPLICAS            IMAGE                             PORTS
   x8l52xbdlhkd        stack-php_mysql-db        replicated          1/1                 mysql:5.7                         *:3306->3306/tcp
   lfu2zebydvtj        stack-php_nginx           replicated          3/3                 docker-php_nginx:latest           *:8080->8080/tcp
@@ -220,8 +220,8 @@ networks:
 
 * `docker service ps <name>`
 
-  ```yaml
-  docker service ps stack-php_nginx
+  ```shell
+  # docker service ps stack-php_nginx
   ID                  NAME                IMAGE                     NODE                DESIRED STATE       CURRENT STATE            ERROR               PORTS
   cmrmgwv0y7ym        stack-php_nginx.1   docker-php_nginx:latest   docker-desktop      Running             Running 16 minutes ago
   sndpvwh3utqe        stack-php_nginx.2   docker-php_nginx:latest   docker-desktop      Running             Running 16 minutes ago
@@ -232,8 +232,8 @@ networks:
 
 * `docker service scale <name>=<number>` : number > number_now, scale up; number < number_now, scale down.
 
-  ```yaml
-  docker service scale stack-php_nginx=5
+  ```shell
+  # docker service scale stack-php_nginx=5
   stack-php_nginx scaled to 5
   overall progress: 5 out of 5 tasks
   1/5: running   [==================================================>]
@@ -244,8 +244,8 @@ networks:
   verify: Service converged
   ```
 
-  ```yaml
-  docker service scale stack-php_nginx=3
+  ```shell
+  # docker service scale stack-php_nginx=3
   stack-php_nginx scaled to 3
   overall progress: 3 out of 3 tasks
   1/3: running   [==================================================>]
