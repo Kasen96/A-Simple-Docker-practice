@@ -284,7 +284,7 @@ networks:
 ### Nginx
 
 ```yaml
-	nginx:
+  nginx:
     image: docker-php_nginx:latest
     deploy:
       restart_policy:
